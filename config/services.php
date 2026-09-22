@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'ads' => [
+        'enabled' => (bool) env('ADS_ENABLED', false),
+        'client' => env('ADS_CLIENT'),
+        'slots' => [
+            'listing_top' => env('ADS_SLOT_LISTING_TOP'),
+            'in_feed' => env('ADS_SLOT_IN_FEED'),
+            'article_top' => env('ADS_SLOT_ARTICLE_TOP'),
+            'article_bottom' => env('ADS_SLOT_ARTICLE_BOTTOM'),
+        ],
+    ],
+
 ];
