@@ -2,7 +2,7 @@
 $isEdit = $article->exists;
 @endphp
 
-<form method="POST" action="{{ $route }}" enctype="multipart/form-data" class="space-y-4">
+<form method="POST" action="{{ $route }}" enctype="multipart/form-data">
     @csrf
     @if ($isEdit)
         @method('PUT')
