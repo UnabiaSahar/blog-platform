@@ -29,11 +29,21 @@
                 {{ $article->excerpt }}
             </div>
 
-            <div class="article-body">
-                {!! nl2br(e($article->body)) !!}
-            </div>
+            @if ($canRead)
+                <div class="article-body">
+                    {!! nl2br(e($article->body)) !!}
+                </div>
 
-            <x-ad-slot placement="article_bottom" :article="$article" />
+                <x-ad-slot placement="article_bottom" :article="$article" />
+            @else
+                <div class="alert alert-primary text-center my-4" role="alert">
+                    <h2 class="h4">{{ __('This article is for subscribers') }}</h2>
+                    <p class="mb-3">{{ __('Subscribe to read the full story and enjoy unlimited ad-free reading.') }}</p>
+                    <a href="{{ route('billing.index') }}" class="btn btn-primary">
+                        {{ __('Subscribe now') }}
+                    </a>
+                </div>
+            @endif
 
             @if ($article->user_id === auth()->id())
                 <div class="mt-4 d-flex gap-2">

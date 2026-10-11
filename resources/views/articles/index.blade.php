@@ -25,6 +25,9 @@
                             <img src="{{ asset('storage/'.$article->cover_image) }}" class="card-img-top" alt="{{ $article->title }}" style="height: 180px; object-fit: cover;">
                         @endif
                         <div class="card-body">
+                            @if ($article->is_subscribers_only)
+                                <span class="badge bg-warning text-dark mb-2">{{ __('Subscribers only') }}</span>
+                            @endif
                             <h3 class="h6 fw-bold">
                                 <a href="{{ route('articles.show', $article) }}" class="text-decoration-none text-dark">
                                     {{ $article->title }}

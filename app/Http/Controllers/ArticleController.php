@@ -22,7 +22,8 @@ class ArticleController extends Controller
     }
 
     /**
-     * Display the specified article. Drafts are only visible to their author.
+     * Display the specified article. Drafts are only visible to their author and
+     * subscribers-only articles are gated behind an active subscription.
      */
     public function show(Request $request, Article $article): View
     {
@@ -30,6 +31,12 @@ class ArticleController extends Controller
             abort(404);
         }
 
-        return view('articles.show', ['article' => $article]);
+        $canRead = ! $article->is_subscribers_only
+            || (bool) $request->user()?->hasActiveSubscription();
+
+        return view('articles.show', [
+            'article' => $article,
+            'canRead' => $canRead,
+        ]);
     }
 }
