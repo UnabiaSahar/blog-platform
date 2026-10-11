@@ -14,9 +14,12 @@ class DashboardController extends Controller
     public function show(Request $request): View
     {
         $user = $request->user();
+        $subscription = $user->subscription('default');
 
         if (! $user->isAuthor()) {
-            return view('dashboard');
+            return view('dashboard', [
+                'subscription' => $subscription,
+            ]);
         }
 
         $draftArticles = $user->articles()
@@ -32,6 +35,7 @@ class DashboardController extends Controller
         return view('dashboard', [
             'draftArticles' => $draftArticles,
             'publishedArticles' => $publishedArticles,
+            'subscription' => $subscription,
         ]);
     }
 }

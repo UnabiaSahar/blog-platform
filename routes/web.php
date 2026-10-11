@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthorArticleController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,12 @@ Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('art
 
 Route::middleware(['auth', 'verified'])->get('/dashboard', [DashboardController::class, 'show'])
     ->name('dashboard');
+
+Route::middleware(['auth', 'verified'])->prefix('billing')->name('billing.')->group(function () {
+    Route::get('/', [BillingController::class, 'index'])->name('index');
+    Route::post('/checkout', [BillingController::class, 'checkout'])->name('checkout');
+    Route::get('/portal', [BillingController::class, 'portal'])->name('portal');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

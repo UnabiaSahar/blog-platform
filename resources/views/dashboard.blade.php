@@ -4,6 +4,33 @@
     </x-slot>
 
     <div class="container">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h3 class="h5 mb-1">{{ __('Your plan') }}</h3>
+
+                    @if ($subscription && $subscription->valid())
+                        <span class="badge bg-success">
+                            {{ $subscription->onTrial() ? __('Trial') : __('Subscriber') }}
+                        </span>
+
+                        @if ($subscription->onGracePeriod())
+                            <small class="text-muted ms-2">
+                                {{ __('Access ends :date', ['date' => $subscription->ends_at->toFormattedDateString()]) }}
+                            </small>
+                        @endif
+                    @else
+                        <span class="badge bg-secondary">{{ __('Free') }}</span>
+                        <small class="text-muted ms-2">{{ __('You are seeing ads.') }}</small>
+                    @endif
+                </div>
+
+                <a href="{{ route('billing.index') }}" class="btn btn-outline-primary btn-sm">
+                    {{ $subscription && $subscription->valid() ? __('Manage billing') : __('Upgrade') }}
+                </a>
+            </div>
+        </div>
+
         @if (auth()->user()->isAuthor())
             <div class="row mb-4">
                 <div class="col-md-6">
@@ -50,15 +77,6 @@
             <a href="{{ route('authors.articles.create') }}" class="btn btn-primary">
                 {{ __('Write New Article') }}
             </a>
-        @else
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h3 class="h5">{{ __('Welcome, :name!', ['name' => auth()->user()->name]) }}</h3>
-                    <p class="text-muted mb-0">
-                        {{ __("You're on the free plan. Billing and subscriptions are coming soon.") }}
-                    </p>
-                </div>
-            </div>
         @endif
     </div>
 </x-app-layout>

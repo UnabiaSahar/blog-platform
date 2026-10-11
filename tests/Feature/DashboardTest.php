@@ -16,15 +16,29 @@ class DashboardTest extends TestCase
         $this->get('/dashboard')->assertRedirect('/login');
     }
 
-    public function test_reader_sees_plan_status_placeholder(): void
+    public function test_free_reader_sees_the_free_plan_status(): void
     {
         $reader = User::factory()->create();
 
         $this->actingAs($reader)
             ->get('/dashboard')
             ->assertOk()
-            ->assertSee('free', false)
-            ->assertSee('plan', false);
+            ->assertSee('Your plan')
+            ->assertSee('Free')
+            ->assertSee('Upgrade');
+    }
+
+    public function test_subscriber_sees_the_subscriber_plan_status(): void
+    {
+        $reader = User::factory()->create();
+        $this->subscriptionFor($reader);
+
+        $this->actingAs($reader)
+            ->get('/dashboard')
+            ->assertOk()
+            ->assertSee('Your plan')
+            ->assertSee('Subscriber')
+            ->assertDontSee('Upgrade');
     }
 
     public function test_author_sees_their_articles(): void

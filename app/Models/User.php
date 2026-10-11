@@ -11,13 +11,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 
 #[Fillable(['name', 'email', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use Billable, HasFactory, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -30,6 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => Role::class,
+            'trial_ends_at' => 'datetime',
         ];
     }
 
@@ -49,11 +51,25 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Phase 1 placeholder: every user sees ads. Phase 2 will suppress ads
-     * for active subscribers.
+     * Determine if the user has an active subscription.
+     *
+     * Cashier's `subscribed` returns true during the grace period of a canceled
+     * subscription (until `ends_at`), so users keep ad-free access until the end
+     * of their current billing cycle rather than losing it mid-cycle (PRD §6).
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscribed('default');
+    }
+
+    /**
+     * Determine if the user should be shown advertisements.
+     *
+     * Only active subscribers get an ad-free experience; everyone else,
+     * including guests, sees ads.
      */
     public function canViewAds(): bool
     {
-        return true;
+        return ! $this->hasActiveSubscription();
     }
 }
